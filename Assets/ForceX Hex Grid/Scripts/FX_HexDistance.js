@@ -10,19 +10,18 @@ private var SelectedHex : GameObject;
 private var MapWidth : int;
 
 function Start(){
-//MapWidth = GetComponent(FX_HexMapGen).MapWidth;
-Cam2.transform.position.x = Cam1.transform.position.x - (MapWidth * HexSize);
+	Cam2.transform.position.x = Cam1.transform.position.x - (MapWidth * HexSize);
 }
 
 function Update () {
-Cam2.transform.position.x = Cam1.transform.position.x - (MapWidth * HexSize);
-MousePosition1();
-MousePosition2();
-HexDistance();
+	Cam2.transform.position.x = Cam1.transform.position.x - (MapWidth * HexSize);
+	MousePosition1();
+	MousePosition2();
+	HexDistance();
 }
 
 function MousePosition1(){
-var ray = Cam1.ScreenPointToRay (Input.mousePosition);
+	var ray = Cam1.ScreenPointToRay (Input.mousePosition);
 	if (Physics.Raycast (ray, MouseGrid, 100)) {
 		GoTo = MouseGrid.collider.GetComponent(FX_HexInfo).GridPosition;
 		if(Input.GetMouseButtonDown(0)){
@@ -39,7 +38,7 @@ var ray = Cam1.ScreenPointToRay (Input.mousePosition);
 }
 
 function MousePosition2(){
-var ray = Cam2.ScreenPointToRay (Input.mousePosition);
+	var ray = Cam2.ScreenPointToRay (Input.mousePosition);
 	if (Physics.Raycast (ray, MouseGrid, 100)) {
 		GoTo = MouseGrid.collider.GetComponent(FX_HexInfo).GridPosition;
 		if(Input.GetMouseButtonDown(0)){
@@ -56,13 +55,13 @@ var ray = Cam2.ScreenPointToRay (Input.mousePosition);
 }
 
 function HexDistance(){
-//The distance from our CurPos to our GoTo
-dx = Mathf.Abs(GoTo.x - CurPos.x);
-dy = Mathf.Abs(GoTo.y - CurPos.y);
-dz = Mathf.Abs(GoTo.z - CurPos.z);
+	//The distance from our CurPos to our GoTo
+	dx = Mathf.Abs(GoTo.x - CurPos.x);
+	dy = Mathf.Abs(GoTo.y - CurPos.y);
+	dz = Mathf.Abs(GoTo.z - CurPos.z);
 
-var DistA : int = Mathf.Max(dx, dy, dz);
-var DistB : int = Mathf.Abs(DistA - Mathf.Abs(MapWidth + dy));	
+	var DistA : int = Mathf.Max(dx, dy, dz);
+	var DistB : int = Mathf.Abs(DistA - Mathf.Abs(MapWidth + dy));	
 
 	if(DistA == DistB){
 		Distance = DistA;
@@ -73,9 +72,7 @@ var DistB : int = Mathf.Abs(DistA - Mathf.Abs(MapWidth + dy));
 
 function OnGUI(){
 	if(MouseGrid.collider != null){
-
 		GUI.Label (Rect(20,0,100,20), GoTo.ToString());
 		GUI.Label (Rect(20,30,100,20), Distance.ToString("Distance: #."));
+	}
 }
-}
-//End
