@@ -238,7 +238,9 @@ var ray1 = Cam1.ScreenPointToRay (MousePos);
 		}
 		
 		if(Input.GetMouseButtonDown(1)){
-			Instantiate (Cube, MouseHex.collider.transform.position, Quaternion.identity);	
+			GW = Instantiate (Cube, MouseHex.collider.transform.position, Quaternion.identity);	
+			GW.GetComponent(FX_HexInfo).GridPosition = GoToHex;
+			
 		}
 		
 	}
