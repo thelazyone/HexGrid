@@ -1,22 +1,56 @@
-﻿private var ThisHex : GameObject;
-var GridPosition : Vector3;
+﻿private var ThisToken : GameObject;
 var IsSelected : boolean;
-var Occupied : boolean = false;
-var flag = "token";
+var RealColor : Color = Color.white;
 
 function Start(){
-	ThisHex = gameObject;
-	globalStuff.tokenCounter = globalStuff.tokenCounter + 1;
+	ThisToken = gameObject;
+}
+
+function OnMouseOver () {
+	//left click: selects the hex and deselects the previous one.
+    if(Input.GetMouseButtonDown(0)){
+		if (PublicVars.CurrentObject != null)
+			PublicVars.CurrentObject.GetComponent(FX_TokenInfo).Unselect();
+		Select();
+		PublicVars.CurrentObject = ThisToken;
+	} 
+	/*
+	if(Input.GetMouseButtonDown(1)){
+		PublicVars.PublicHexList[30].GetComponent(FX_HexInfo).Select();
+		PublicVars.PublicHexList[11].GetComponent(FX_HexInfo).Select();
+		PublicVars.PublicHexList[44].GetComponent(FX_HexInfo).Select();
+	} */
+}
+
+function Select(){
+	ThisToken.renderer.material.color = Color.blue;
+	RealColor = ThisToken.renderer.material.color;
+	IsSelected = true;
+}
+//sets the colour to white - transparent.
+function Unselect(){
+	ThisToken.renderer.material.color = Color.white;
+	RealColor = ThisToken.renderer.material.color;
+	IsSelected = false;
 }
 
 function OnMouseEnter(){
-	ThisHex.renderer.material.color = Color.red;
+	ThisToken.renderer.material.color = Color.red;
 }
 
 function OnMouseExit(){
-	if(!IsSelected){
-		ThisHex.renderer.material.color = Color.white;
-	}else{
-		ThisHex.renderer.material.color = Color.blue;
-	}
+	ThisToken.renderer.material.color = RealColor;
+}
+
+
+function Update(){
+	if(Input.GetMouseButtonDown(1) && IsSelected && PublicVars.HoveredObject.name == "Hex(Clone)"){
+		Debug.Log("cliccato!");
+ 		ThisToken.GetComponent(Coordinates).GridPosition = PublicVars.HoveredObject.GetComponent(Coordinates).GridPosition;
+ 		ThisToken.collider.transform.position = PublicVars.HoveredObject.collider.transform.position;
+	} 
+}
+
+function FindHex(HexCoord : Vector3) : int{
+	
 }

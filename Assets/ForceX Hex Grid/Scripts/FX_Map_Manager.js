@@ -4,10 +4,8 @@ var CameraAngle : float = 65;
 var CameraSpeed : float = 2;
 var MinZoom : float = 1;
 var HexGrid : GameObject;
-var Cube : GameObject;
 var MapSize : Vector2;
-var CurrentHex : GameObject;
-var HoveredHex : GameObject;
+var HoveredObject : GameObject;
 var Distance : int;
 
 private var MoveVector : Vector3;
@@ -15,17 +13,34 @@ private var pos : Vector3;
 private var HexExt : Vector2;
 private var HexSize : Vector2;
 private var HexInfo : Vector3;
-private var MouseHex : RaycastHit;
-private var Cam2 : Camera;
+private var MouseObject : RaycastHit;
+private var Cam2 : Camera;							//USELESS?
 private var Cam1T : Transform;
-private var Cam2T : Transform;
+private var Cam2T : Transform;						//USELESS?
 private var MousePos : Vector2;
-private var Cam1Lead : boolean;
+private var Cam1Lead : boolean;						//USELESS?
 private var HexList : Array;
+
+class PublicVars {
+	static var CurrentHex : GameObject = null;
+	static var HoveredObject : GameObject = null;
+	static var CurrentObject : GameObject = null;
+	static var PublicHexList = new Array();
+}
+
+/*
+function FindHex(SearchCoordinates : Vector3) : GameObject{
+		for (var searchHex in HexList){
+			if (searchHex.GetComponent(Coordinates).GridPosition == SearchCoordinates)
+				return searchHex;
+		}
+}	
+*/
 
 function Awake(){
 	GetHexProperties();
 	GenerateMap();
+	PublicVars.PublicHexList = HexList;
 }
 
 function GetHexProperties(){
@@ -39,6 +54,7 @@ function GetHexProperties(){
 }
 
 function GenerateMap(){
+	var CounterID : int = 0;
 	var HexMap : GameObject = new GameObject("HexMap");
 	HexList = new Array();
 	HexMap.transform.position = Vector3.zero;
@@ -48,11 +64,13 @@ function GenerateMap(){
 			newHex = Instantiate (HexGrid, Vector3.zero, Quaternion.identity);
 			newHex.transform.position = Vector3(w * ((HexExt.x * 2)) + (HexExt.x * even), 0, (h * HexExt.y) * 1.5);
 			if(h > 1 + even){
-				newHex.GetComponent(FX_HexInfo).GridPosition = Vector3(w - Mathf.Round((h / 2) + .1),h, -(w - Mathf.Round((h / 2) + .1) + h));
+				newHex.GetComponent(Coordinates).GridPosition = Vector3(w - Mathf.Round((h / 2) + .1),h, -(w - Mathf.Round((h / 2) + .1) + h));
 			}else{
-				newHex.GetComponent(FX_HexInfo).GridPosition = Vector3(w,h, -w - h * even);
+				newHex.GetComponent(Coordinates).GridPosition = Vector3(w,h, -w - h * even);
 			}
 			newHex.transform.parent = HexMap.transform;
+			newHex.GetComponent(FX_HexInfo).ID = CounterID;
+			CounterID = CounterID + 1;
 			HexList.Add(newHex);
 		}
 	}
@@ -78,34 +96,17 @@ function Update() {
 function HandleMouse(){
 	MousePos = Input.mousePosition;
 	var ray1 = Cam1.ScreenPointToRay(MousePos);
-	if (Physics.Raycast(ray1, MouseHex, 100)){
-		HoveredHex = MouseHex.collider.gameObject;
-		if(Input.GetMouseButtonDown(0)){
-			SelectHex(HoveredHex);
-		}
-		
-		if(Input.GetMouseButtonDown(1)){
-			GW = Instantiate (Cube, MouseHex.collider.transform.position, Quaternion.identity);	
-			GW.GetComponent(FX_HexInfo).GridPosition = HoveredHex.GetComponent(FX_HexInfo).GridPosition;
-		}
+	if (Physics.Raycast(ray1, MouseObject, 100)){
+		HoveredObject = MouseObject.collider.gameObject;
+		PublicVars.HoveredObject = HoveredObject;
 	}
-}
-
-function SelectHex(selectedHex : GameObject){
-	if(CurrentHex != null){
-		CurrentHex.renderer.material.color = Color.white;
-		CurrentHex.GetComponent(FX_HexInfo).IsSelected = false;
-	}
-	CurrentHex = selectedHex;
-	CurrentHex.renderer.material.color = Color.blue;
-	CurrentHex.GetComponent(FX_HexInfo).IsSelected = true;
 }
 
 function CalculateDistance(){
-	if ( HoveredHex == null || CurrentHex == null ) return;
-	dx = Mathf.Abs(HoveredHex.GetComponent(FX_HexInfo).GridPosition.x - CurrentHex.GetComponent(FX_HexInfo).GridPosition.x);
-	dy = Mathf.Abs(HoveredHex.GetComponent(FX_HexInfo).GridPosition.y - CurrentHex.GetComponent(FX_HexInfo).GridPosition.y);
-	dz = Mathf.Abs(HoveredHex.GetComponent(FX_HexInfo).GridPosition.z - CurrentHex.GetComponent(FX_HexInfo).GridPosition.z);
+	if ( HoveredObject == null || PublicVars.CurrentHex == null ) return;
+	dx = Mathf.Abs(HoveredObject.GetComponent(Coordinates).GridPosition.x - PublicVars.CurrentHex.GetComponent(Coordinates).GridPosition.x);
+	dy = Mathf.Abs(HoveredObject.GetComponent(Coordinates).GridPosition.y - PublicVars.CurrentHex.GetComponent(Coordinates).GridPosition.y);
+	dz = Mathf.Abs(HoveredObject.GetComponent(Coordinates).GridPosition.z - PublicVars.CurrentHex.GetComponent(Coordinates).GridPosition.z);
 
 	var DistA : int = Mathf.Max(dx, dy, dz);
 	var DistB : int = Mathf.Abs(DistA - Mathf.Abs(MapSize.x + dy));	
@@ -144,6 +145,6 @@ function UpdateCamera(){
 }
 
 function OnGUI(){
-	GUI.Label(Rect(20,0,100,20), HoveredHex.GetComponent(FX_HexInfo).GridPosition.ToString());
+	GUI.Label(Rect(20,0,100,20), HoveredObject.GetComponent(Coordinates).GridPosition.ToString());
 	GUI.Label(Rect(20,30,100,20), Distance.ToString("Distance: #."));
 }

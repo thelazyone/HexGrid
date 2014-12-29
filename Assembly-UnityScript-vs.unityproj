@@ -46,9 +46,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\ForceX Hex Grid\Scripts\Coordinates.js" />
      <Compile Include="Assets\ForceX Hex Grid\Scripts\FX_HexDistance.js" />
      <Compile Include="Assets\ForceX Hex Grid\Scripts\FX_HexInfo.js" />
      <Compile Include="Assets\ForceX Hex Grid\Scripts\FX_Map_Manager.js" />
+     <Compile Include="Assets\ForceX Hex Grid\Scripts\FX_TokenInfo.js" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
